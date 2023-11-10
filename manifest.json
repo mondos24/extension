@@ -21,7 +21,10 @@
         "128": "icons/icon-128.png"
     },
     
-    "permissions": [],
+    "permissions": [
+        "tabs",
+        "scripting"
+    ],
     "host_permissions": [
         "<all_urls>"
     ],
@@ -41,5 +44,12 @@
             ]
         }
     ],
-    "commands": {}
+    "commands": {
+        "switch_blur": {
+          "suggested_key": {
+            "default": "Ctrl+Shift+Y"
+          },
+          "description": "Turn on/off blur"
+        }
+    }
 }
