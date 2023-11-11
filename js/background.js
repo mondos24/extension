@@ -14,7 +14,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 );
 */
 
-
 let filterEnabled = false;
 
 function toggleFilter() {
@@ -34,5 +33,12 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 chrome.commands.onCommand.addListener((command) => {
     if (command === "switch_blur") {
         toggleFilter();
+        updateAndToggleBadge();
     }
 });
+
+
+function updateAndToggleBadge() { // Общаемся с popup.js для переключения badge
+    chrome.runtime.sendMessage({ updateBadge: true });
+    
+}
