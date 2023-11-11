@@ -21,9 +21,14 @@ function toggleFilter() {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         var message = (filterEnabled) ? {applyFilter: true} : {removeFilter: true};
         chrome.tabs.sendMessage(tabs[0].id, message);
+        chrome.runtime.sendMessage({ updateBadgeAndButtonMessage: true });
     });
 }
-
+/*
+function updateAndToggleBadge() { // Общаемся с popup.js для переключения badge
+    chrome.runtime.sendMessage({ updateBadgeAndButtonMessage: true });
+}
+*/
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.toggleFilter) {
         toggleFilter();
@@ -33,12 +38,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 chrome.commands.onCommand.addListener((command) => {
     if (command === "switch_blur") {
         toggleFilter();
-        updateAndToggleBadge();
+        // updateAndToggleBadge();
     }
 });
-
-
-function updateAndToggleBadge() { // Общаемся с popup.js для переключения badge
-    chrome.runtime.sendMessage({ updateBadge: true });
-    
-}
