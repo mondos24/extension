@@ -6,7 +6,7 @@ chrome.runtime.onInstalled.addListener(() => {
 })
 
 /*
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => { // Общаемся с contentScript
       if (request.greeting == "hello") {
         sendResponse({farewell: "goodbye"});
       }
@@ -16,19 +16,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
 let filterEnabled = false;
 
-function toggleFilter() {
+function toggleFilter() { // Применяет/Удаляем фильтр и меняет badge и button
     filterEnabled = !filterEnabled;
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         var message = (filterEnabled) ? {applyFilter: true} : {removeFilter: true};
         chrome.tabs.sendMessage(tabs[0].id, message);
-        chrome.runtime.sendMessage({ updateBadgeAndButtonMessage: true });
+        chrome.runtime.sendMessage({ updateBadgeAndButtonMessage: true }); 
+        // Общаемся с popup.js для переключения badge и button
     });
 }
-/*
-function updateAndToggleBadge() { // Общаемся с popup.js для переключения badge
-    chrome.runtime.sendMessage({ updateBadgeAndButtonMessage: true });
-}
-*/
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
     if (request.toggleFilter) {
         toggleFilter();
@@ -38,6 +35,11 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 chrome.commands.onCommand.addListener((command) => {
     if (command === "switch_blur") {
         toggleFilter();
-        // updateAndToggleBadge();
     }
+});
+
+chrome.contextMenus.create({
+    id: 'myContextMenu',
+    title: 'Context',
+    contexts: ['all']
 });
