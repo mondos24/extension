@@ -24,7 +24,10 @@
     "permissions": [
         "tabs",
         "scripting",
-        "contextMenus"
+        "contextMenus",
+        "storage",
+        "activeTab",
+        "clipboardRead"
     ],
     "host_permissions": [
         "<all_urls>"

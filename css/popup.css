@@ -1,4 +1,9 @@
 body {
-    height: 60px;
-    width: 100px;
+    height: 200px;
+    width: 500px;
+}
+
+button {
+    display: block;
+    margin-bottom: 10px; /* Регулируйте отступ между элементами по вашему усмотрению */
 }
