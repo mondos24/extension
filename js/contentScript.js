@@ -6,15 +6,38 @@ chrome.runtime.sendMessage( {greeting: "hello"}, function(response) { // Общ�
 
 
 
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) { // Добавляем/Удаляем фильтр
-    if (request.applyFilter) {
-        document.body.classList.add('filter-off');
-    } else if (request.removeFilter) {
-        document.body.classList.remove('filter-off');
-    }
-});
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 navigator.clipboard.readText()
       .then(text => {
         // здесь вы можете использовать переменную text, содержащую скопированный текст
@@ -23,5 +46,4 @@ navigator.clipboard.readText()
       .catch(err => {
         console.error('Не удалось получить данные из буфера обмена:', err);
       });
-
-
+*/

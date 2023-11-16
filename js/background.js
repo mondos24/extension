@@ -1,9 +1,49 @@
-console.log('hi im service worker');
-chrome.runtime.onInstalled.addListener(() => {
+chrome.runtime.onInstalled.addListener(details => {
+    console.log('onInstalled reason: ', details.reason);
     chrome.tabs.create({
         url: 'https://habr.com/ru/articles/'
-    })
-})
+    });
+});
+
+
+chrome.runtime.onMessage.addListener(data => {
+    const {event, prefs} = data;
+    switch (event) {
+        case 'onSwitch':
+            handleOnSwitch(prefs);
+            break;
+        default:
+            break;
+        
+    }
+});
+
+const handleOnSwitch = (prefs) => {
+    console.log('prefs:', prefs);
+    chrome.storage.local.set(prefs); // Store our prefs
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => { // Общаемся с contentScript
@@ -14,32 +54,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => { // О�
 );
 */
 
-let filterEnabled = false;
 
-function toggleFilter() { // Применяет/Удаляем фильтр и меняет badge и button
-    filterEnabled = !filterEnabled;
-    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        var message = (filterEnabled) ? {applyFilter: true} : {removeFilter: true};
-        chrome.tabs.sendMessage(tabs[0].id, message);
-        chrome.runtime.sendMessage({ updateBadgeAndButtonMessage: true }); 
-        // Общаемся с popup.js для переключения badge и button
-    });
-}
-
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    if (request.toggleFilter) {
-        toggleFilter();
-    }
-});
-
-chrome.commands.onCommand.addListener((command) => {
-    if (command === "switch_blur") {
-        toggleFilter();
-    }
-});
-
+/*
 chrome.contextMenus.create({
     id: 'myContextMenu',
     title: 'Context',
     contexts: ['all']
 });
+*/
