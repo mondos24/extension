@@ -1,20 +1,29 @@
 // ELEMENTS
 const inputSetElement = document.getElementById('inputSet');
 const checkboxBlur = document.getElementById('flexSwitchCheckBlur');
+const activeSpan = document.getElementById('activeSpan');
+const inactiveSpan = document.getElementById('inactiveSpan');
 
 // BUTTONS
 const setButton = document.getElementById('setB');
 const getButton = document.getElementById('getB');
 
+const hideElement = (elem) => {
+  elem.style.display = 'none';
+}
+
+const showElement = (elem) => {
+  elem.style.display = '';
+}
 
 
 checkboxBlur.onclick = () => {
   const prefs = {
-    status: checkboxBlur.checked  
+    status: checkboxBlur.checked
   }
-  chrome.runtime.sendMessage({ event: 'onSwitch', prefs }); // sending it to background.js
+  checkboxBlur ? hideElement(activeSpan) : hideElement(inactiveSpan);                               // last changes
+  chrome.runtime.sendMessage({ event: 'onSwitch', prefs }); // sending it to background.js}
 }
-
 
 
 getButton.onclick = () => {
