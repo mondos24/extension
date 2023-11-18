@@ -16,17 +16,26 @@ const showElement = (elem) => {
   elem.style.display = '';
 }
 
+const handleOnStartState = () => {
+  showElement(activeSpan);
+  hideElement(inactiveSpan);
+}
+
+const handleOnStopState = () => {
+  hideElement(activeSpan);
+  showElement(inactiveSpan);
+}
+
 
 checkboxBlur.onclick = () => {
   const prefs = {
     status: checkboxBlur.checked
   };
-  if (checkboxBlur.checked) {
-    showElement(activeSpan);
-    hideElement(inactiveSpan);
+  const isRunning = prefs.status
+  if (isRunning) {
+    handleOnStartState();
   } else {
-    hideElement(activeSpan);
-    showElement(inactiveSpan);
+    handleOnStopState();
   }
   chrome.runtime.sendMessage({ event: 'onSwitch', prefs });
 };
