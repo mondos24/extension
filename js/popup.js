@@ -50,12 +50,15 @@ getButton.onclick = () => {
 }
 
 
-chrome.storage.local.get(["status"], (result) => {
+chrome.storage.local.get(["status"], (result) => {  // Sync elements and buttons
   const { status } = result;
   console.log(status);
 
   if (status) {
     checkboxBlur.checked = status;
+    handleOnStartState();
+  } else {
+    handleOnStopState();
   }
 });
 
