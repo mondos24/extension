@@ -20,10 +20,16 @@ const showElement = (elem) => {
 checkboxBlur.onclick = () => {
   const prefs = {
     status: checkboxBlur.checked
+  };
+  if (checkboxBlur.checked) {
+    showElement(activeSpan);
+    hideElement(inactiveSpan);
+  } else {
+    hideElement(activeSpan);
+    showElement(inactiveSpan);
   }
-  checkboxBlur ? hideElement(activeSpan) : hideElement(inactiveSpan);                               // last changes
-  chrome.runtime.sendMessage({ event: 'onSwitch', prefs }); // sending it to background.js}
-}
+  chrome.runtime.sendMessage({ event: 'onSwitch', prefs });
+};
 
 
 getButton.onclick = () => {
