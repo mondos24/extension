@@ -20,40 +20,43 @@ chrome.runtime.onMessage.addListener(data => {
 
 const handleOnSwitch = (prefs) => {
     console.log('prefs:', prefs);
-    
+    // changes
+    const status = prefs.status;
+    if (status) {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { // Посылка в contentScript.js
+        chrome.tabs.sendMessage(tabs[0].id, {applyFilter: true});
+        });
+    } else {
+        chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { // Посылка в contentScript.js
+        chrome.tabs.sendMessage(tabs[0].id, {removeFilter: true});
+        });
+    }  
+    //
     chrome.storage.local.set(prefs); // Store our prefs
 }
 
 // changes 
-let filterEnabled = false;
-chrome.storage.local.get(["filterStatus"], (result) => {
-    /*
-    const { filterStatus } = result;
-    filterEnabled = !filterStatus; //                               Поменять
-    console.log('mi menyaem', filterStatus, filterEnabled);
-    */
-});
-console.log(filterEnabled, 'eto on');
-
-
+/*
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) { 
+    console.log(request);
     if (request.toggleFilter) { // из popup.js
-        console.log(filterEnabled);
-        filterEnabled = !filterEnabled;
-        chrome.storage.local.set({ filterStatus: filterEnabled });
+        chrome.storage.local.get(["status"], (result) => {  // Sync elements and buttons
+            const { status } = result;
+            console.log(status);
         
-        if (filterEnabled) {
-            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            if (status) {
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {applyFilter: true});
-            });
-        } else {
-            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                });
+            } else {
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                 chrome.tabs.sendMessage(tabs[0].id, {removeFilter: true});
-            });
-        }
+                });
+            }
+        });
     }
 });
-
+*/
 
 
 
