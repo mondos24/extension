@@ -38,6 +38,9 @@ checkboxBlur.onclick = () => {
     handleOnStopState();
   }
   chrome.runtime.sendMessage({ event: 'onSwitch', prefs });
+
+  // changes
+  // chrome.runtime.sendMessage({toggleFilter: true});
 };
 
 
