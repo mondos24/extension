@@ -1,10 +1,3 @@
-/*
-chrome.runtime.sendMessage( {greeting: "hello"}, function(response) { // Общение content script с service worker
-    console.log(response.farewell)
-})
-*/
-
-// changes
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.applyFilter) {
     document.body.classList.add('filter-on');
@@ -14,17 +7,14 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 });
 
 
-function filterCheck() { // Если в хранилище статус есть, то применяем фильтр по значению статуса
+let filterCheck = () => { // Если в хранилище статус есть, то применяем фильтр по значению статуса
     chrome.storage.local.get(["status"], (result) => {
+
         const { status } = result;
-    
-        if (status) {
-            document.body.classList.add('filter-on');
-        } else {
-            document.body.classList.remove('filter-on');
-        }
+        document.body.classList.toggle('filter-on', status ? true : false); // Если статус true, то filter-on в css
     });
 }
+
 
 filterCheck();
 

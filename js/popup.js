@@ -27,7 +27,7 @@ const handleOnStopState = () => {
 }
 
 
-checkboxBlur.onclick = () => {
+checkboxBlur.addEventListener('click', () => {
   const prefs = {
     status: checkboxBlur.checked
   };
@@ -38,29 +38,34 @@ checkboxBlur.onclick = () => {
     handleOnStopState();
   }
   chrome.runtime.sendMessage({ event: 'onSwitch', prefs });
+});
 
-  // changes
-  // chrome.runtime.sendMessage({toggleFilter: true});
-};
+checkboxBlur.addEventListener('click', () => {
+  const prefs = {
+    status: checkboxBlur.checked
+  };
+  const isRunning = prefs.status
+  prefs.status ? handleOnStartState() : handleOnStopState(); // Если status - true, то Start
+  chrome.runtime.sendMessage({ event: 'onSwitch', prefs }); // background.js
+});
 
 
-getButton.onclick = () => {
+getButton.addEventListener('click', () => {
   if (inputSetElement.value) {
     console.log('data: ', inputSetElement.value);
   } else {
     console.log('empty')
   }
-}
+});
 
 
-chrome.storage.local.get(["status"], (result) => {  // Sync elements and buttons
+chrome.storage.local.get(["status"], (result) => {  
   const { status } = result;
-  if (status) {
-    checkboxBlur.checked = status;
-    handleOnStartState();
-  } else {
-    handleOnStopState();
-  }
+  chrome.runtime.lastError
+    ? console.error(chrome.runtime.lastError) // Если есть ошибка, вывести ошибку
+    : status // иначе статус есть
+    ? (checkboxBlur.checked = status, handleOnStartState()) // если он есть, вывести это
+    : handleOnStopState(); // иначе это
 });
 
 
