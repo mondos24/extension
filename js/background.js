@@ -5,7 +5,6 @@ chrome.runtime.onInstalled.addListener(details => {
     });
 });
 
-
 chrome.runtime.onMessage.addListener(data => {
     const {event, prefs} = data;
     switch (event) {
@@ -35,28 +34,6 @@ const handleOnSwitch = (prefs) => {
     chrome.storage.local.set(prefs); // Store our prefs
 }
 
-// changes 
-/*
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) { 
-    console.log(request);
-    if (request.toggleFilter) { // из popup.js
-        chrome.storage.local.get(["status"], (result) => {  // Sync elements and buttons
-            const { status } = result;
-            console.log(status);
-        
-            if (status) {
-                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                chrome.tabs.sendMessage(tabs[0].id, {applyFilter: true});
-                });
-            } else {
-                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                chrome.tabs.sendMessage(tabs[0].id, {removeFilter: true});
-                });
-            }
-        });
-    }
-});
-*/
 
 
 

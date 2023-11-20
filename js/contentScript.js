@@ -7,14 +7,26 @@ chrome.runtime.sendMessage( {greeting: "hello"}, function(response) { // Общ�
 // changes
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.applyFilter) {
-    console.log('da, request apply filter');
-    document.body.classList.add('filter-off');
+    document.body.classList.add('filter-on');
   } else if (request.removeFilter) {
-    console.log('da, request remove filter');
-    document.body.classList.remove('filter-off');
+    document.body.classList.remove('filter-on');
   }
 });
 
+
+function filterCheck() { // Если в хранилище статус есть, то применяем фильтр по значению статуса
+    chrome.storage.local.get(["status"], (result) => {
+        const { status } = result;
+    
+        if (status) {
+            document.body.classList.add('filter-on');
+        } else {
+            document.body.classList.remove('filter-on');
+        }
+    });
+}
+
+filterCheck();
 
 
 

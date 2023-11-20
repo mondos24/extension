@@ -1,7 +1,7 @@
 img, video {
-    filter: blur(10px);
+    filter: none;
 }
 
-.filter-off img, .filter-off video {
-    filter: none;
+.filter-on img, .filter-on video {
+    filter: blur(10px);
 }
