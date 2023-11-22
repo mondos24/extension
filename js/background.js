@@ -5,7 +5,6 @@ chrome.runtime.onInstalled.addListener(details => {
   });
 });
 
-
 chrome.runtime.onMessage.addListener(data => {
   const { event, prefs } = data;
   switch (event) {
@@ -21,9 +20,7 @@ chrome.runtime.onMessage.addListener(data => {
 
 
 const handleOnSwitch = prefs => {
-
   console.log('prefs:', prefs);
-
   const status = prefs.status;
   const message = status ? { applyFilter: true } : { removeFilter: true }; // В зависимости от status (boolean) выбран фильтр, который применится
   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {

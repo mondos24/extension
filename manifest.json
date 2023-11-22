@@ -50,10 +50,10 @@
     ],
     "commands": {
         "switch_blur": {
-          "suggested_key": {
+        "suggested_key": {
             "default": "Ctrl+Shift+Y"
-          },
-          "description": "Turn on/off blur"
+        },
+        "description": "Turn on/off blur"
         }
     }
 }
