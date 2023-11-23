@@ -1,3 +1,6 @@
+let lastClipboardData = ''
+let interval
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.applyFilter) {
     document.body.classList.add('filter-on');
