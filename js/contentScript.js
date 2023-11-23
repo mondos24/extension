@@ -1,6 +1,3 @@
-let lastClipboardData = ''
-let interval
-
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.applyFilter) {
     document.body.classList.add('filter-on');
@@ -18,26 +15,117 @@ let filterCheck = () => { // Если в хранилище статус ест�
     });
 }
 
-
 filterCheck();
 
 
+
+
 // changes
-const readClipboard = async() => {
+/*
+const setClipboard = async () => {
+  try {
+    const clipboardData = await navigator.clipboard.readText();
   
-  const clipboardData = {
-    CData: navigator.clipboard.readText()
-  };
-  chrome.storage.local.set(clipboardData, () => { // Store our clipboard data
-    if (chrome.runtime.lastError) {
-      console.error('Failed to store clipboard data:', chrome.runtime.lastError);
-    } else {
-      console.log('Clipboard data stored successfully.', clipboardData);
-    }
-  });
-  return await navigator.clipboard.readText();
+    chrome.storage.local.set({ cData: clipboardData }, () => {
+      if (chrome.runtime.lastError) {
+        console.error('Failed to store clipboard data:', chrome.runtime.lastError);
+      } else {
+        console.log('Clipboard data stored successfully.');
+      }
+    });
+
+    getStorageClipboardData();
+  } catch (error) {
+    console.error('Failed to read clipboard data:', error);
+  }
 }
-readClipboard();
+
+const getStorageClipboardData = () => {
+  chrome.storage.local.get("cData", (data) => {
+    const { cData } = data;
+    console.log(cData, 'Да, это гет');
+  });
+}
+
+setClipboard();
+
+*/
+
+
+/*
+chrome.runtime.onMessage.addListener(async function(request, sender, sendResponse) {
+  if (request.message === "Привет, contentScript!") {
+    try {
+      const clipboardData = await navigator.clipboard.readText();
+      chrome.runtime.sendMessage({ clipboardContent: clipboardData });
+    } catch (error) {
+      console.error('Failed to read clipboard data:', error);
+    }
+  }
+});
+*/
+
+
+
+
+//
+let timeout;
+let lastClipboardData = "";
+
+const writeClipboard = async (text) => {
+  lastClipboardData = text;
+  await chrome.storage.sync.set({ clipboardData: text }).then(() => {
+    console.log('Буфер обмена записан')
+  });
+};
+
+function checkClipboard() {
+  if(document.hasFocus()){
+    navigator.clipboard.readText().then((clipboardData) => {
+
+      if (clipboardData !== lastClipboardData) {
+        lastClipboardData = clipboardData;
+        writeClipboard(clipboardData);
+      }
+    });
+  } 
+}
+const startHandleClipboard = () => {
+  navigator.clipboard.readText().then((text) => {
+    lastClipboardData = text;
+    timeout = setInterval(checkClipboard, 100);
+  });
+};
+
+const stopHandleClipboard = () => {
+  clearInterval(timeout);
+};
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  switch (request.type) {
+    case "enable": {
+      if (request.value) {
+        startHandleClipboard();
+      } else {
+        stopHandleClipboard();
+      }
+      sendResponse({ ok: true });
+      return;
+    }
+    case "copy": {
+      const text = request.text;
+      writeClipboard(text);
+      sendResponse({ ok: true });
+      return;
+    }
+  }
+  sendResponse({ ok: true });
+});
+
+//
+
+
+
 
 
 

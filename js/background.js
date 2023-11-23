@@ -1,12 +1,29 @@
-const activeTabs = new Set();
-
-
 chrome.runtime.onInstalled.addListener(details => {
   console.log('onInstalled reason: ', details.reason);
+  //
+  saveClipboardData();
+  //
   chrome.tabs.create({
     url: 'https://habr.com/ru/articles/'
   });
 });
+
+//
+function saveClipboardData() {
+  chrome.storage.local.get(["status"], (result) => {
+    const { status } = result;
+    console.log(status, 'чи');
+    if (status) {
+      chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+        chrome.tabs.sendMessage(tabs[0].id, { type: "enable", value: true }, (response) => {
+          console.log('Отправилось')
+        });
+      });
+    }
+  });
+}
+//
+
 
 chrome.runtime.onMessage.addListener(data => {
   const { event, prefs } = data;
@@ -22,25 +39,19 @@ chrome.runtime.onMessage.addListener(data => {
 });
 
 
+
 const handleOnSwitch = prefs => {
   console.log('prefs:', prefs);
+  //
+  chrome.storage.sync.get(["clipboardData"]).then((result) => {
+    console.log("Value currently is " + result.clipboardData);
+  });
+  //
   const status = prefs.status;
   const message = status ? { applyFilter: true } : { removeFilter: true }; // В зависимости от status (boolean) выбран фильтр, который применится
+
   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
     chrome.tabs.sendMessage(tabs[0].id, message); // contentScript.js
-
-    // changes
-    chrome.tabs.sendMessage(tabs[0].id, {type: 'enable', value: status}, (response) => {
-      if (tabs[0].id){if(activeTabs.has(tabs[0].id)){
-        if (status){
-          activeTabs.delete(tabs[0].id);
-        } else {
-          activeTabs.add(tabs[0].id);
-        }
-      }}
-    });
-
-
   });
 
   chrome.storage.local.set(prefs, () => { // Store our prefs
@@ -53,29 +64,9 @@ const handleOnSwitch = prefs => {
 };
 
 
-// changes
-chrome.tabs.onRemoved.addListener((tabId) => {
-  if(activeTabs.has(tabId)){
-    activeTabs.delete(tabId);
-  }
+chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+  chrome.tabs.sendMessage(tabs[0].id, { type: "enable", value: true }, (response) => {});
 });
-
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if(request.type === 'status'){
-    const tabId = sender?.tab?.id
-    if(tabId){
-      sendResponse({ active: activeTabs.has(tabId) });
-    }
-  }
-});
-
-chrome.action.onClicked.addListener((tab) => {
-  const tabId = tab?.id;
-  if(tabId){
-    
-  }
-})
-
 
 /*
 chrome.contextMenus.create({
@@ -84,3 +75,21 @@ chrome.contextMenus.create({
     contexts: ['all']
 });
 */
+
+
+
+/*
+chrome.action.onClicked.addListener(() => {
+  console.log('чи');
+  chrome.storage.local.get(["status"], (result) => {
+    const { status } = result;
+    console.log(status, 'чи');
+    if (status) {
+      chrome.tabs.sendMessage(tabId, { type: "enable", value: true }, (response) => {});
+    } else {
+      chrome.tabs.sendMessage(tabId, { type: "enable", value: false }, (response) => {});
+    }
+  });
+});
+*/
+

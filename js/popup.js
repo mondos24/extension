@@ -50,15 +50,6 @@ checkboxBlur.addEventListener('click', () => {
 });
 
 
-getButton.addEventListener('click', () => {
-  if (inputSetElement.value) {
-    console.log('data: ', inputSetElement.value);
-  } else {
-    console.log('empty')
-  }
-});
-
-
 chrome.storage.local.get(["status"], (result) => {  
   const { status } = result;
   chrome.runtime.lastError
@@ -72,26 +63,45 @@ chrome.storage.local.get(["status"], (result) => {
 
 
 
+// inputSetElement.value
 
-
-
-/*
-// chrome.storage.sync
-var set_button = document.getElementById('setB');
-var input_stroke = document.getElementById('input_set');
-
-set_button.onclick = function() {
-  set_button.innerHTML = 'saved';
-  chrome.storage.sync.set({'input_value': input_stroke.value}, function() {
+setButton.onclick = function() {
+  
+  setButton.innerHTML = 'saved';
+  chrome.storage.sync.set({'inputValue': inputSetElement.value}, function() {
     setTimeout(function() {
-      set_button.innerHTML = 'save';
+      setButton.innerHTML = 'save';
     }, 1000); // 1000 milliseconds = 1 second
   });
+
 }
 
-document.getElementById('getB').onclick = function() {
-  chrome.storage.sync.get('input_value', function(data) {
-    input_stroke.value = data.input_value;
+getButton.onclick = function() {
+
+  chrome.storage.sync.get('inputValue', function(data) {
+    inputSetElement.value = data.inputValue;
+  });
+
+
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {message: "Привет, contentScript!"});
+  });
+  
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.clipboardContent) {
+      // Используем содержимое буфера обмена
+      console.log("Содержимое буфера обмена: " + request.clipboardContent);
+    }
   });
 }
+
+/*
+getButton.addEventListener('click', () => {
+  if (inputSetElement.value) {
+    console.log('data: ', inputSetElement.value);
+  } else {
+    console.log('empty')
+  }
+});
 */
+
