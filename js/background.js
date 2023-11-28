@@ -24,11 +24,11 @@ chrome.runtime.onInstalled.addListener(details => {
 
 
 chrome.runtime.onMessage.addListener( data => {
-  const { event, prefs } = data;
+  const { event, status } = data;
   switch (event) {
 
     case 'onSwitch':
-      handleOnSwitch(prefs);
+      handleOnSwitch(status);
       break;
 
     default:
@@ -37,25 +37,24 @@ chrome.runtime.onMessage.addListener( data => {
 });
 
 
-const handleOnSwitch = (prefs) => {
-  console.log('prefs:', prefs);
+const handleOnSwitch = (status) => {
+  console.log('status:', status);
   //
   // chrome.storage.sync.get(["clipboardData"]).then((result) => {
   //   console.log("Value currently is " + result.clipboardData);
   // });
   //
-  const status = prefs.status;
   const message = status ? { applyFilter: true } : { removeFilter: true }; // В зависимости от status (boolean) выбран фильтр, который применится
 
   chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
     chrome.tabs.sendMessage(tabs[0].id, message); // contentScript.js
   });
 
-  chrome.storage.local.set(prefs, () => { // Store our prefs
+  chrome.storage.local.set({ status: status }, () => { // Store our status
     if (chrome.runtime.lastError) {
-      console.error('Failed to store prefs:', chrome.runtime.lastError);
+      console.error('Failed to store status:', chrome.runtime.lastError);
     } else {
-      console.log('Prefs stored successfully.');
+      console.log('Status stored successfully.');
     }
   });
 };
@@ -69,9 +68,13 @@ chrome.contextMenus.create({
 
 chrome.commands.onCommand.addListener((command) => {
   if (command === 'switch_blur') {
-    console.log(`Command: ${command}`);
+
+    chrome.storage.local.get(["status"], (result) => {
+      const { status } = result;
+      console.log(status, 'статус');
+      handleOnSwitch(!status);
+    });
   }
-  
 });
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>

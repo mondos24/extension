@@ -9,7 +9,6 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
 
 let filterCheck = () => { // Если в хранилище статус есть, то применяем фильтр по значению статуса
     chrome.storage.local.get(["status"], (result) => {
-
       const { status } = result;
       document.body.classList.toggle('filter-on', status ? true : false); // Если статус true, то filter-on в css
     });
@@ -65,6 +64,38 @@ chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   }
 });
 
+const preEl = document.getElementById("secondary-inner");
+
+
+function removeItems(){
+
+  var ta = document.createElement('textarea');
+
+  // prevent user input
+  ta.addEventListener('cut', function(e) { e.preventDefault(); }, false);
+  ta.addEventListener('copy', function(e) { e.preventDefault(); }, false);
+  ta.addEventListener('paste', function(e) { e.preventDefault(); }, false);
+  ta.addEventListener('keydown', function(e) { e.preventDefault(); }, false);
+  elemWidth = preEl.offsetWidth;
+  ta.style.cssText = `
+                      width: ${elemWidth}px;
+                      height: 120px;
+                      resize: none;
+                      padding: 12px 20px;
+                      box-sizing: border-box;
+                      border: 2px solid #ccc;
+                      border-radius: 4px;
+                      background-color: #f8f8f8;
+                      font-size: 16px;`;
+  // listen for user selections
+  ta.textContent = 'Content from extension would be here'
+  ta.addEventListener('select', function() {
+      // function logic...
+  }, false);
+  preEl.prepend(ta)
+}
+
+removeItems();
 // changes
 /*
 const setClipboard = async () => {

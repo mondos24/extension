@@ -29,16 +29,14 @@ const handleOnStopState = () => {
 
 
 checkboxBlur.addEventListener('click', () => {
-  const prefs = {
-    status: checkboxBlur.checked
-  };
-  const isRunning = prefs.status
-  prefs.status ? handleOnStartState() : handleOnStopState(); // Если status - true, то Start
-  chrome.runtime.sendMessage({ event: 'onSwitch', prefs }); // background.js
+  const isRunning = checkboxBlur.checked
+  isRunning ? handleOnStartState() : handleOnStopState(); // Если status - true, то Start
+  chrome.runtime.sendMessage({ event: 'onSwitch', status: checkboxBlur.checked }); // background.js
 });
 
 
-chrome.storage.local.get(["status"], (result) => {  
+chrome.storage.local.get(["status"], (result) => {
+  console.log(result);
   const { status } = result;
   chrome.runtime.lastError
     ? console.error(chrome.runtime.lastError) // Если есть ошибка, вывести ошибку
