@@ -27,18 +27,6 @@ const handleOnStopState = () => {
 }
 
 
-checkboxBlur.addEventListener('click', () => {
-  const prefs = {
-    status: checkboxBlur.checked
-  };
-  const isRunning = prefs.status
-  if (isRunning) {
-    handleOnStartState();
-  } else {
-    handleOnStopState();
-  }
-  chrome.runtime.sendMessage({ event: 'onSwitch', prefs });
-});
 
 checkboxBlur.addEventListener('click', () => {
   const prefs = {
@@ -66,11 +54,18 @@ chrome.storage.local.get(["status"], (result) => {
 // inputSetElement.value
 
 setButton.onclick = function() {
-  
-  setButton.innerHTML = 'saved';
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {
+      message: "copyText",
+    },
+    function(response) {})
+  }); 
+
+
+  setButton.innerHTML = 'copied';
   chrome.storage.sync.set({'inputValue': inputSetElement.value}, function() {
     setTimeout(function() {
-      setButton.innerHTML = 'save';
+      setButton.innerHTML = 'copy';
     }, 1000); // 1000 milliseconds = 1 second
   });
 
@@ -82,18 +77,22 @@ getButton.onclick = function() {
     inputSetElement.value = data.inputValue;
   });
 
-
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.sendMessage(tabs[0].id, {message: "Привет, contentScript!"});
+  chrome.tabs.query({ active: true, currentWindow: true }, tabs => {
+    chrome.tabs.sendMessage(tabs[0].id, { toastify: true, text: 'Прошлый запрос получен' }); // contentScript.js
   });
-  
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.clipboardContent) {
-      // Используем содержимое буфера обмена
-      console.log("Содержимое буфера обмена: " + request.clipboardContent);
-    }
-  });
+  // chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+  //   chrome.tabs.sendMessage(tabs[0].id, {message: "Привет, contentScript!"});
+  // });
+  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+  // chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  //   if (request.clipboardContent) {
+  //     // Используем содержимое буфера обмена
+  //     console.log("Содержимое буфера обмена: " + request.clipboardContent);
+  //   }
+  // });
+  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 }
+
 
 /*
 getButton.addEventListener('click', () => {

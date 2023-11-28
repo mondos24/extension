@@ -13,12 +13,57 @@ let filterCheck = () => { // Если в хранилище статус ест�
       const { status } = result;
       document.body.classList.toggle('filter-on', status ? true : false); // Если статус true, то filter-on в css
     });
+    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+    //chrome.storage.local.get(["cData"], (result) => {
+    
+    //   const { cData } = result;
+    //   console.log(cData);
+    // });
+    
 }
 
 filterCheck();
 
 
+chrome.runtime.onMessage.addListener( // this is the message listener
+  function(request, sender, sendResponse) {
+    if (request.message === "copyText")
+      chrome.storage.sync.get('inputValue', function(data) {
+      const textToCopy = data.inputValue;
+      copyToTheClipboard(textToCopy);
+      ToastifyIt('Текст скопирован');
+    });
+  }
+);
 
+async function copyToTheClipboard(textToCopy){
+    const el = document.createElement('textarea');
+    
+    el.value = textToCopy;
+    el.setAttribute('readonly', '');
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+}
+
+const ToastifyIt = async (text) => {
+  Toastify({
+    text: text,
+    duration: 1500,
+    gravity: "bottom",
+    position: "center"
+  }).showToast();
+}
+
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+  if (request.toastify) {
+    ToastifyIt(request.text);
+  }
+});
 
 // changes
 /*
@@ -68,60 +113,64 @@ chrome.runtime.onMessage.addListener(async function(request, sender, sendRespons
 
 
 
+
+
+
+
 //
-let timeout;
-let lastClipboardData = "";
+// let timeout;
+// let lastClipboardData = "";
 
-const writeClipboard = async (text) => {
-  lastClipboardData = text;
-  await chrome.storage.sync.set({ clipboardData: text }).then(() => {
-    console.log('Буфер обмена записан')
-  });
-};
+// const writeClipboard = async (text) => {
+//   lastClipboardData = text;
+//   await chrome.storage.sync.set({ clipboardData: text }).then(() => {
+//     console.log('Буфер обмена записан')
+//   });
+// };
 
-function checkClipboard() {
-  if(document.hasFocus()){
-    navigator.clipboard.readText().then((clipboardData) => {
+// function checkClipboard() {
+//   if(document.hasFocus()){
+//     navigator.clipboard.readText().then((clipboardData) => {
 
-      if (clipboardData !== lastClipboardData) {
-        lastClipboardData = clipboardData;
-        writeClipboard(clipboardData);
-      }
-    });
-  } 
-}
-const startHandleClipboard = () => {
-  navigator.clipboard.readText().then((text) => {
-    lastClipboardData = text;
-    timeout = setInterval(checkClipboard, 100);
-  });
-};
+//       if (clipboardData !== lastClipboardData) {
+//         lastClipboardData = clipboardData;
+//         writeClipboard(clipboardData);
+//       }
+//     });
+//   } 
+// }
+// const startHandleClipboard = () => {
+//   navigator.clipboard.readText().then((text) => {
+//     lastClipboardData = text;
+//     timeout = setInterval(checkClipboard, 100);
+//   });
+// };
 
-const stopHandleClipboard = () => {
-  clearInterval(timeout);
-};
+// const stopHandleClipboard = () => {
+//   clearInterval(timeout);
+// };
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  switch (request.type) {
-    case "enable": {
-      if (request.value) {
-        startHandleClipboard();
-      } else {
-        stopHandleClipboard();
-      }
-      sendResponse({ ok: true });
-      return;
-    }
-    case "copy": {
-      const text = request.text;
-      writeClipboard(text);
-      sendResponse({ ok: true });
-      return;
-    }
-  }
-  sendResponse({ ok: true });
-});
-
+// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+//   switch (request.type) {
+//     case "enable": {
+//       if (request.value) {
+//         startHandleClipboard();
+//       } else {
+//         stopHandleClipboard();
+//       }
+//       sendResponse({ ok: true });
+//       return;
+//     }
+//     case "copy": {
+//       const text = request.text;
+//       writeClipboard(text);
+//       sendResponse({ ok: true });
+//       return;
+//     }
+//   }
+//   sendResponse({ ok: true });
+// });
+// 
 //
 
 

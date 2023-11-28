@@ -3,15 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Extension Options</title>
+    <title>Summarize Options</title>
+    <link rel="stylesheet" href="/css/options.css">
+
 </head>
 <body>
+    
     <h1>Program Features</h1>
-    <p>This extension allows you to apply a blur filter to images and videos on web pages. You can toggle the filter on and off using the following methods:</p>
-    <ul>
-        <li>Click the extension's badge icon in the browser toolbar.</li>
-        <li>Use the keyboard shortcut (Ctrl + Shift + Y).</li>
-        <li>Right-click on any element on the page and select "Context" from the context menu.</li>
-    </ul>
+    <div id="blur-filter-instructions" style="padding: 0 10px;">
+        <p>This extension allows you to apply a blur filter to images and videos on web pages. You can toggle the filter on
+            and off using the following methods:</p>
+        <ul style="padding: 0; margin: 0;">
+            <li>1. Click the extension's badge icon in the browser toolbar.</li>
+            <li>2. Use the keyboard shortcut (Ctrl + Shift + Y).</li>
+            <li>3. Right-click on any element on the page and select "Context" from the context menu.</li>
+        </ul>
+    </div>
+    <h1>Summarize Options</h1>
+    <form>
+        <!-- select prompts -->
+        <label for="promptSelect">Select a prompt:</label>
+        <select name="promptSelect" type="text" id="promptSelect" class="form-select" aria-label="Default select example">
+            <option selected>Choose your prompt (Default)</option>
+            <option value="1">Lorem</option>
+            <option value="2">Ipsum</option>
+            <option value="3">Dolor</option>
+        </select>
+        <label for="prompt">Prompt to use:</label>
+        <input placeholder="Write your prompt" type="text" id="prompt" size="40" value="" />
+        <br />
+        <button id="saveButton" class="btn btn-outline-success">Save</button>
+        <button id="resetButton" class="btn btn-outline-danger">Reset</button>
+        <div id="status"></div>
+    </form>
+    <script src="options.js"></script>
+
 </body>
 </html>
+
