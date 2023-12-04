@@ -1,3 +1,18 @@
+document.addEventListener('copy', () => {
+  ToastifyIt('Текст скопирован');
+  navigator.clipboard.readText()
+    .then(clpbrd => {
+      chrome.storage.local.set({ clpbrd: clpbrd }, () => { // Store our status
+        if (chrome.runtime.lastError) {
+          console.error('Failed to store clpbrd:', chrome.runtime.lastError);
+        } else {
+          console.log('Clpbrd stored successfully.', clpbrd);
+    }
+  });
+    })
+    .catch(err => console.log(err));
+})
+
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
   if (request.applyFilter) {
     document.body.classList.add('filter-on');
@@ -30,7 +45,6 @@ chrome.runtime.onMessage.addListener( // this is the message listener
       chrome.storage.sync.get('inputValue', function(data) {
       const textToCopy = data.inputValue;
       copyToTheClipboard(textToCopy);
-      ToastifyIt('Текст скопирован');
     });
   }
 );

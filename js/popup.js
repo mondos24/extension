@@ -3,6 +3,7 @@ const inputSetElement = document.getElementById('inputSet');
 const checkboxBlur = document.getElementById('flexSwitchCheckBlur');
 const activeSpan = document.getElementById('activeSpan');
 const inactiveSpan = document.getElementById('inactiveSpan');
+const textareaElement = document.getElementById('exampleFormControlTextarea1');
 
 // BUTTONS
 const setButton = document.getElementById('setB');
@@ -34,6 +35,16 @@ checkboxBlur.addEventListener('click', () => {
   chrome.runtime.sendMessage({ event: 'onSwitch', status: checkboxBlur.checked }); // background.js
 });
 
+textareaElement.addEventListener('click', () => {
+  chrome.storage.local.get('clpbrd', function(data) {
+    console.log(data.clpbrd);
+    textareaElement.value = data.clpbrd;
+  });
+  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+    chrome.tabs.sendMessage(tabs[0].id, {toastify: true, text: "Текст вставлен"});
+  }); 
+
+})
 
 chrome.storage.local.get(["status"], (result) => {
   console.log(result);
